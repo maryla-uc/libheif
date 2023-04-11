@@ -47,20 +47,22 @@ extern "C" {
 //  1.14         1             3            5             1             1            1
 //  1.15         1             4            5             1             1            1
 
-#if defined(_MSC_VER) && !defined(LIBHEIF_STATIC_BUILD)
-#ifdef LIBHEIF_EXPORTS
-#define LIBHEIF_API __declspec(dllexport)
+#if defined(HAVE_VISIBILITY) && HAVE_VISIBILITY
+#  if defined(_MSC_VER) && !defined(LIBHEIF_STATIC_BUILD)
+#    ifdef LIBHEIF_EXPORTS
+#      define LIBHEIF_API __declspec(dllexport)
+#    else
+#      define LIBHEIF_API __declspec(dllimport)
+#    endif
+#  else
+#    ifdef LIBHEIF_EXPORTS
+#      define LIBHEIF_API __attribute__((__visibility__("default")))
+#    else
+#      define LIBHEIF_API
+#    endif
+#  endif
 #else
-#define LIBHEIF_API __declspec(dllimport)
-#endif
-#elif defined(HAVE_VISIBILITY) && HAVE_VISIBILITY
-#ifdef LIBHEIF_EXPORTS
-#define LIBHEIF_API __attribute__((__visibility__("default")))
-#else
-#define LIBHEIF_API
-#endif
-#else
-#define LIBHEIF_API
+#  define LIBHEIF_API
 #endif
 
 #define heif_fourcc(a, b, c, d) ((a<<24) | (b<<16) | (c<<8) | d)
